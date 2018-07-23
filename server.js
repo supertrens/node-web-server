@@ -3,6 +3,8 @@ const express = require('express');
 const hbs = require('hbs');
 const app = express();
 
+const PORT = process.env.PORT || 3000;
+
 app.set('view engine', 'hbs');
 app.use(express.static(__dirname + '/public'));
 hbs.registerPartials(__dirname + '/views/partials');
@@ -11,14 +13,19 @@ app.use((req, resp, next) => {
   let now = new Date().toString();
   let log = `${now} : ${req.method} ${req.url}`;
 
-  fs.appendFile('server.log' , log + '\n', (err) => {
-    if(err){
+  fs.appendFile('server.log', log + '\n', err => {
+    if (err) {
       console.log('Unable to append to server.log');
     }
   });
   console.log(log);
   next();
 });
+
+// // maintenance middleware
+// app.use((req, resp, next) => {
+//   resp.render('maintenance.hbs');
+// });
 
 hbs.registerHelper('getCurrentYear', () => {
   return new Date().getFullYear();
@@ -47,6 +54,6 @@ app.get('/bad', (req, resp) => {
   });
 });
 
-app.listen(3000, () => {
-  console.log('Server is up on port 3000');
+app.listen(PORT, () => {
+  console.log(`Server is up on port ${PORT}`);
 });
